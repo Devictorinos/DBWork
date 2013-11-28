@@ -2,7 +2,7 @@
 
 require_once 'autoload.php';
 
-$db = new \DBWork\DBWork('localhost', 'northwind', 'root', 'i4l6a1n6');
+$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '');
 
 // alias
 // joins
