@@ -8,14 +8,23 @@ $db = new \DBWork\DBWork('localhost', 'northwind', 'root', '1234');
 // joins
 
 
-$categories = $db->select('categories', '*')->orderBy("CategoryName", false);
+// $categories = $db->select('categories', '*')->orderBy("CategoryName", false);
 
-$products   = $db->select('products', '*')
-    ->orderBy("ProductName", false)
-    ->where("ProductID", ">", "20")
-    ->join($categories, 'CategoryID')
-    ->limit(1);
+// $products   = $db->select('products', '*')
+//     ->orderBy("ProductName", false)
+//     ->where("ProductID", ">", "20")
+//     ->join($categories, 'CategoryID')
+//     ->limit(1);
 
+
+$categories = $db->select('categories', '*');
+$products   = $db->select('products', '*');
+
+$categories->where1('CategoryName', "LIKE", "%A%");
+$products->where2('ProductID', ">", 20);
+$products->where1('ProductID', "<", 30);
+
+$products->join($categories, 'CategoryID');
 
 // var_dump($products->buildJoin());
 var_dump($products->getAll(true));

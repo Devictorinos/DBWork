@@ -9,7 +9,6 @@ use PDOException;
 class Select extends Query
 {
     public $joins = array();
-
     public $where  = array();
     public $params = array();
     public $groupBy;
@@ -17,31 +16,51 @@ class Select extends Query
     public $order  = array();
     public $limit  = null;
 
+    //OR
+
+    public function __call($method, $args)
+    {
+        if (preg_match("/^where(\d+)/", $method, $matches)) {
+            $group = (int)$matches[1];
+            $this->where($group, $args[0], $args[1], $args[2]);
+        }
+
+        if (preg_match("/^whereIn(\d+)/", $method, $matches)) {
+            $group = (int)$matches[1];
+            $this->whereIn($group, $args[0], $args[1]);
+        }
+
+        if (preg_match("/^whereBetween(\d+)/", $method, $matches)) {
+            $group = (int)$matches[1];
+            $this->whereBetween($group, $args[0], $args[1], $args[2]);
+        }
+        return $this;
+    }
 
     //WHERE CLAUSE
-    public function where($field, $operation, $subject)
+    public function where($group, $field, $operation, $subject)
     {
-        $this->where[]  = "$this->table.$field $operation ?";
-        $this->params[] = $subject;
+        $this->where[$group][] = "$this->table.$field $operation ?";
+        $this->params[$group][] = $subject;
         return $this;
     }
 
     //WHERE IN
-    public function whereIn($field, array $list)
+    public function whereIn($group, $field, array $list)
     {
         $fList  =  $this->inClause($list);
-        $this->where[] = "$this->table.$field IN  $fList";
-        $this->params  = array_merge($this->params, $list);
+        $this->where[$group][] = "$this->table.$field IN  $fList";
+        $this->params[$group][] = isset($this->params[$group]) ? array_merge($this->params[$group], $list) : $list;
         return $this;
 
     }
 
     //WHERE BETWEEN
-    public function whereBetween($field, $a, $b)
+    public function whereBetween($group, $field, $a, $b)
     {
-        $this->where[]  = " $($this->table.$field BETWEEN ? AND ?) ";
-        $this->params[] = $a;
-        $this->params[] = $b;
+        $this->where[$group][] = " $($this->table.$field BETWEEN ? AND ?) ";
+        $this->params[$group][] = $a;
+        $this->params[$group][] = $b;
         return $this;
     }
 
@@ -159,8 +178,15 @@ class Select extends Query
 
         foreach ($_objects as $object) {
             $fields  = array_merge($fields, $object->fields);
-            $where   = array_merge($where, $object->where);
-            $params  = array_merge($params, $object->params);
+            
+            foreach ($object->where as $key => $value) {
+                $where[$key] = isset($where[$key]) ? array_merge($where[$key], $value) : $value;
+            }
+
+            foreach ($object->params as $key => $value) {
+                $params[$key] = isset($params[$key]) ? array_merge($params[$key], $value) : $value;
+            }
+
             $orderBy = array_merge($orderBy, $object->order);
         }
 
@@ -173,19 +199,18 @@ class Select extends Query
         $sql = array_merge($sql, $_sql);
 
         if (!empty($where)) {
-            $sql[] = "WHERE ". implode(" AND ", $where);
+            
+            $whereSql = array();
+
+            foreach ($where as $group) {
+                $whereSql[] = "(" . implode(" AND ", $group) . ")";
+            }
+
+            $whereSql = "WHERE " . implode(' OR ', $whereSql);
+
+            $sql[] = $whereSql;
         }
 
-        // if (!empty($this->on)) {
-
-        //     $sql[] = "ON ".implode(" ", $this->on);
-        // }
-
-        // if (!empty($this->groupBy)) {
-
-        //     $sql[] = "GROUP BY $this->groupBy";
-        // }
-        
         if (!empty($orderBy)) {
             $orderBy = implode(", ", $orderBy);
             $sql[] = "ORDER BY $orderBy";
@@ -197,17 +222,22 @@ class Select extends Query
         }
 
         $sql = implode($delimiter, $sql);
-        return array($sql, $params);
+
+        $flatten_params = array();
+        array_walk_recursive($params, function ($a) use (&$flatten_params) {
+            $flatten_params[] = $a;
+        });
+
+        return array($sql, $flatten_params);
     }
 
 
     //Executeing query
-    private function runSQL($debug = false)
+    protected function runSQL($debug = false)
     {
         list($sql, $params) = $this->buildSQL();
 
         if ($debug) {
-
             Log::query($sql, $params);
         }
 
@@ -232,17 +262,5 @@ class Select extends Query
             Log::error($e);
         }
 
-    }
-
-    //Select Select Method
-    public function getAll($debug = false)
-    {
-        return $this->runSQL($debug)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    //select One Row Method
-    public function getOne($debug = false)
-    {
-        return $this->runSQL($debug)->fetch(PDO::FETCH_ASSOC);
     }
 }
