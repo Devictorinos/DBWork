@@ -24,7 +24,7 @@ $categories->where1('CategoryName', "LIKE", "%A%");
 $products->where2('ProductID', ">", 20);
 $products->where1('ProductID', "<", 30);
 
-$products->join($categories, 'CategoryID');
+$products->outerJoin($categories, 'CategoryID');
 
 // var_dump($products->buildJoin());
 var_dump($products->getAll(true));

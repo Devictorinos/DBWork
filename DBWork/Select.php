@@ -77,24 +77,17 @@ class Select extends Query
         return $this;
     }
 
-    //INNER JOIN
+    //LEFT JOIN
     public function leftJoin(Select $table, $on)
     {
         $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"LEFT JOIN");
         return $this;
     }
 
-    //INNER JOIN
+    //RIGHT JOIN
     public function rightJoin(Select $table, $on)
     {
         $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"RIGHT JOIN");
-        return $this;
-    }
-
-    //INNER JOIN
-    public function outerJoin(Select $table, $on)
-    {
-        $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"OUTER JOIN");
         return $this;
     }
 
