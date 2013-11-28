@@ -2,16 +2,30 @@
 
 require_once 'autoload.php';
 
+$db = new \DBWork\DBWork('localhost', 'northwind', 'root', 'i4l6a1n6');
 
-$db= new\DBWork\DBWork;
+// alias
+// joins
 
-$query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.id) as "fruits id"'])
-->join('fruit','f')
-->on('f.`fruitTest`','=','t.`id`'."\n")
-//->on('t.`status`','=',"'active'", true)
-//->onBetween('t.`id`', 30, 35, true)
-->onJoin('test_2','t2','left')
-->on('t2.`Tname`','=','f.`id`','on');
+
+$categories = $db->select('categories', '*')->orderBy("CategoryName", false);
+
+$products   = $db->select('products', '*')
+    ->orderBy("ProductName", false)
+    ->where("ProductID", ">", "20")
+    ->join($categories, 'CategoryID');
+
+
+// var_dump($products->buildJoin());
+var_dump($products->getAll(true));
+
+// $query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.id) as "fruits id"'])
+// ->join('fruit','f')
+// ->on('f.`fruitTest`','=','t.`id`'."\n")
+// //->on('t.`status`','=',"'active'", true)
+// //->onBetween('t.`id`', 30, 35, true)
+// ->onJoin('test_2','t2','left')
+// ->on('t2.`Tname`','=','f.`id`','on');
 
 //->onIn('t.`id`', [30,35,32]);
 
@@ -25,7 +39,6 @@ $query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.i
 // ->orderBy('t.`id`' ,false);
 
 
-$rows = $query->getAll(true);
+// $rows = $query->getAll(true);
 
-var_dump($rows);
-
+// var_dump($rows);
