@@ -173,9 +173,7 @@ class Select extends Query
         $sql = array_merge($sql, $_sql);
 
         if (!empty($where)) {
-
-            var_dump($where);
-            // $sql[] = "WHERE ". implode(" ", $this->where);
+            $sql[] = "WHERE ". implode(" AND ", $where);
         }
 
         // if (!empty($this->on)) {

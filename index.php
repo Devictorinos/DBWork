@@ -2,7 +2,7 @@
 
 require_once 'autoload.php';
 
-$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '');
+$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '1234');
 
 // alias
 // joins
@@ -13,7 +13,8 @@ $categories = $db->select('categories', '*')->orderBy("CategoryName", false);
 $products   = $db->select('products', '*')
     ->orderBy("ProductName", false)
     ->where("ProductID", ">", "20")
-    ->join($categories, 'CategoryID');
+    ->join($categories, 'CategoryID')
+    ->limit(1);
 
 
 // var_dump($products->buildJoin());
