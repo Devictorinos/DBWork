@@ -14,7 +14,7 @@ class Log
     public static function query($sql, $params)
     {
 
-        $highlight = array("SELECT","as"," IN ","JOIN","GROUP BY","LEFT JOIN","RIGHT JOIN","OUTER JOIN","FROM","BETWEEN","LIKE","WHERE","LIMIT","ORDER BY","ASC","DESC");
+        $highlight = array("SELECT","as"," IN ","DELETE","TRUNCATE","JOIN","GROUP BY","LEFT JOIN","RIGHT JOIN","OUTER JOIN","FROM","BETWEEN","LIKE","WHERE","LIMIT","ORDER BY","ASC","DESC");
 
         $regex = '/' . implode('|', $highlight).'/';
         $sql = preg_replace($regex, '<span style="color:red">$0</span>', $sql);

@@ -2,7 +2,7 @@
 
 require_once 'autoload.php';
 
-$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '1234');
+$db = new \DBWork\DBWork('localhost', 'test', 'root', '123');
 
 // alias
 // joins
@@ -17,17 +17,17 @@ $db = new \DBWork\DBWork('localhost', 'northwind', 'root', '1234');
 //     ->limit(1);
 
 
-$categories = $db->select('categories', '*');
+// $categories = $db->select('categories', '*');
 $products   = $db->select('products', '*');
 
-$categories->where1('CategoryName', "LIKE", "%A%");
-$products->where2('ProductID', ">", 20);
-$products->where1('ProductID', "<", 30);
+// $categories->where1('CategoryName', "LIKE", "%A%");
+ //$products->where2('ProductID', ">", 20);
+ $products->where1('ProductID', "<", 30);
 
-$products->outerJoin($categories, 'CategoryID');
+// $products->outerJoin($categories, 'CategoryID');
 
 // var_dump($products->buildJoin());
-var_dump($products->getAll(true));
+//var_dump($products->getAll(true));
 
 // $query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.id) as "fruits id"'])
 // ->join('fruit','f')
@@ -52,3 +52,17 @@ var_dump($products->getAll(true));
 // $rows = $query->getAll(true);
 
 // var_dump($rows);
+//$del = $db->delete('people')->runSQL(true);
+// $del->whereIn1("id", [3, 4, 5, 6, 7, 8]);
+// $del->whereIn2("id", [3, 4, 5, 6, 7, 8]);
+
+//$del->runSQL(true);
+//
+//$del = $db->truncate("people")->runSQL(true);
+$update = $db->update("table");
+$update->set([
+                "name" => "viktor",
+                "title" => "Lorem",
+                "contnet" => "Lorem Ipsum"
+            ]);
+$update->buildSQL();

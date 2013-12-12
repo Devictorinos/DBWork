@@ -36,10 +36,16 @@ class DBWork
         }
 
         $fields = array_map(function ($field) use ($table) {
-            return "$table.$field";
+            return "$table.`$field`";
         }, $fields);
 
         return $fields;
+    }
+
+    private function tableClause($table)
+    {
+        $table = "`$table`";
+        return $table;
     }
 
     public function select($table, $fields = null)
@@ -48,6 +54,25 @@ class DBWork
             
         return new Select($this->dbh, $table, $fields);
         
+    }
+
+    public function update($table)
+    {
+        $table = $this->tableClause($table);
+
+        return new Update($this->dbh, $table, $fields = null);
+    }
+
+    public function delete($table, $fields = null)
+    {
+        $table  = $this->tableClause($table);
+        return new Delete($this->dbh, $table, $fields);
+    }
+
+    public function truncate($table, $fields = null)
+    {
+        $table = $this->tableClause($table);
+        return new Truncate($this->dbh, $table, $fields);
     }
 
     // public function select($table, $alias, $fields)
@@ -61,9 +86,8 @@ class DBWork
     public function transaction(callable $callback)
     {
         $this->dbh->beginTransaction();
-
+        
         try {
-
             call_user_func($callback);
 
         } catch (Exception $e) {
@@ -72,7 +96,6 @@ class DBWork
             $this->dbh->rollBack();
 
         }
-
         $this->dbh->commit();
     }
 }

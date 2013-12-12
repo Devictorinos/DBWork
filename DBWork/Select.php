@@ -23,10 +23,12 @@ class Select extends Query
         if (preg_match("/^where(\d+)/", $method, $matches)) {
             $group = (int)$matches[1];
             $this->where($group, $args[0], $args[1], $args[2]);
+            var_dump($args);
         }
 
         if (preg_match("/^whereIn(\d+)/", $method, $matches)) {
             $group = (int)$matches[1];
+            //var_dump($group);
             $this->whereIn($group, $args[0], $args[1]);
         }
 
@@ -34,14 +36,21 @@ class Select extends Query
             $group = (int)$matches[1];
             $this->whereBetween($group, $args[0], $args[1], $args[2]);
         }
+
+        // echo "<pre>";
+        //  print_r($this);
+        //  echo "</pre>";
         return $this;
     }
 
     //WHERE CLAUSE
     public function where($group, $field, $operation, $subject)
     {
-        $this->where[$group][] = "$this->table.$field $operation ?";
+        $this->where[$group][]  = "$this->table.$field $operation ?";
         $this->params[$group][] = $subject;
+         // echo "<pre>";
+         // print_r($this);
+         // echo "</pre>";
         return $this;
     }
 
@@ -161,11 +170,11 @@ class Select extends Query
     private function buildSQL($delimiter = "\n")
     {
 
-        $sql = array();
-        $fields = array();
-        $where = array();
-        $params = array();
-        $orderBy = array();
+        $sql      = array();
+        $fields   = array();
+        $where    = array();
+        $params   = array();
+        $orderBy  = array();
 
         list($_objects, $_sql) = $this->buildJoin();
 
@@ -240,9 +249,9 @@ class Select extends Query
 
             foreach ($params as $key => $val) {
                 
-                $type = is_null($val) ? PDO::PARAM_NULL : PDO::PARAM_STR;
-                $type = is_bool($val) ? PDO::PARAM_BOOL : PDO::PARAM_STR;
-                $type = is_integer($val) ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $type = is_null($val)    ? PDO::PARAM_NULL : PDO::PARAM_STR;
+                $type = is_bool($val)    ? PDO::PARAM_BOOL : PDO::PARAM_STR;
+                $type = is_integer($val) ? PDO::PARAM_INT  : PDO::PARAM_STR;
 
                 $query->bindValue($key+1, $val, $type);
             }
@@ -255,5 +264,17 @@ class Select extends Query
             Log::error($e);
         }
 
+    }
+
+    //Select Select Method
+    public function getAll($debug = false)
+    {
+        return $this->runSQL($debug)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //select One Row Method
+    public function getOne($debug = false)
+    {
+        return $this->runSQL($debug)->fetch(PDO::FETCH_ASSOC);
     }
 }
