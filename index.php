@@ -59,10 +59,11 @@ $products   = $db->select('products', '*');
 //$del->runSQL(true);
 //
 //$del = $db->truncate("people")->runSQL(true);
-$update = $db->update("table");
+$update = $db->update("people");
 $update->set([
-                "name" => "viktor",
-                "title" => "Lorem",
-                "contnet" => "Lorem Ipsum"
+                "name"    => "gfgfd",
+                "id"      => "4",
+                "email"   => "gfdgfdgd",
+                "age" => "gfdgfdg Ipsum"
             ]);
-$update->buildSQL();
+$update->runSQL(true);
