@@ -61,9 +61,9 @@ $products   = $db->select('products', '*');
 //$del = $db->truncate("people")->runSQL(true);
 $update = $db->update("people");
 $update->set([
-                "name"    => "gfgfd",
+                "name"    => "viktor",
                 "id"      => "4",
-                "email"   => "gfdgfdgd",
-                "age" => "gfdgfdg Ipsum"
+                "emai"   => " 2222222",
+                "age" => "543654654"
             ]);
 $update->runSQL(true);
