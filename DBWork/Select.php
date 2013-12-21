@@ -8,13 +8,13 @@ use PDOException;
 
 class Select extends Query
 {
-    public $joins = array();
-    public $where  = array();
-    public $params = array();
-    public $groupBy;
+    public $joins   = array();
+    public $where   = array();
+    public $params  = array();
+    public $groupBy = array();
 
-    public $order  = array();
-    public $limit  = null;
+    public $order   = array();
+    public $limit   = null;
 
     //OR
 
@@ -83,7 +83,7 @@ class Select extends Query
     public function innerJoin(Select $table, $alias, $on)
     {
         $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"INNER JOIN");
-        var_dump($this);
+        //var_dump($this);
         return $this;
         
     }
@@ -102,12 +102,17 @@ class Select extends Query
         return $this;
     }
 
-    // //GROUP BY
-    // public function groupBy($field)
-    // {
-    //     $this->groupBy = " $field ";
-    //     return $this;
-    // }
+    //GROUP BY
+    public function groupBy($field, $asc = true)
+    {
+        if ($asc) {
+            $this->groupBy[] = " $this->alias.$field ASC";
+        } else {
+            $this->groupBy[] = " $this->alias.$field DESC";
+        }
+        
+        return $this;
+    }
 
     //ORDER BY
     public function orderBy($field, $asc = true)
@@ -154,7 +159,7 @@ class Select extends Query
 
             $leftTable  = $this->alias;
             $rightTable = $obj['subject']->table;
-            var_dump($obj['join']);
+           // var_dump($obj['join']);
             $sql[] = $obj['join'] . " " . $rightTable . " as " . $obj['ali'];
             $sql[] = "ON $leftTable." . $obj['on'] . " = ".$obj['ali']."." . $obj['on'];
 
@@ -177,6 +182,7 @@ class Select extends Query
         $where    = array();
         $params   = array();
         $orderBy  = array();
+        $groupBy  = array();
 
         list($_objects, $_sql) = $this->buildJoin();
 
@@ -192,6 +198,7 @@ class Select extends Query
             }
 
             $orderBy = array_merge($orderBy, $object->order);
+            $groupBy = array_merge($groupBy, $object->groupBy);
         }
 
         $fields = implode(", ", $fields);
@@ -213,6 +220,12 @@ class Select extends Query
             $whereSql = "WHERE " . implode(' OR ', $whereSql);
 
             $sql[] = $whereSql;
+        }
+
+        if (!empty($groupBy)) {
+            $groupBy = implode(", ", $groupBy);
+            $sql[] = "GROUP BY $groupBy";
+
         }
 
         if (!empty($orderBy)) {

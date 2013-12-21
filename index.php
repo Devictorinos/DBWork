@@ -17,13 +17,17 @@ $db = new \DBWork\DBWork('localhost', 'northwind', 'root', '123');
 //     ->limit(1);
 
 //$categories = $db->select('categories','c' ,['*']);
-$products   = $db->select('products','p' ,['count(ProductID) as count', 'ProductName']);
+$products   = $db->select('products','p' ,['count(ProductID) as Pcount', 'SupplierID']);
+$products1   = $db->select('products','pp' , ['ProductName as PPname']);
+$catigorys  = $db->select('categories', 'c', 'CategoryName');
 // $categories->where1('CategoryName', "LIKE", "%A%");
  //$products->where2('ProductID', ">", 20);
- $products->where1('ProductID', ">", 25);
+ //$products->where1('ProductID', ">", 25);
 
-//$products->Join($categories,"c", 'CategoryID');
 
+$products->Join($catigorys, 'c', 'CategoryID');
+$products->Join($products1,"pp", 'ProductID');
+$products->groupBy('SupplierID');
 //$products->buildJoin();
 //$products->getAll(true);
 var_dump($products->getAll(true));
