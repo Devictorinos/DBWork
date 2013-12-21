@@ -36,7 +36,28 @@ class DBWork
         }
 
         $fields = array_map(function ($field) use ($table) {
-            return "$table.`$field`";
+
+            if (strpos($field, "(")) {
+
+                preg_match("/\(.*?(.*)\)/", $field, $matches);
+                $argm = $matches[1];
+
+                $field = preg_replace("/$argm/", "$table.$argm", $field);
+            
+                return "$field";
+
+            }
+
+            // if (strpos($field, " * ")) {
+
+            //     return "$table.$field";
+
+             else {
+
+                return "$table.$field";
+
+            }
+
         }, $fields);
 
         return $fields;
@@ -48,11 +69,12 @@ class DBWork
         return $table;
     }
 
-    public function select($table, $fields = null)
+    public function select($table, $alias, $fields = null)
     {
-        $fields = $this->fieldClause($table, $fields);
-            
-        return new Select($this->dbh, $table, $fields);
+        $fields = $this->fieldClause($alias, $fields);
+        // var_dump($fields);
+        // exit();
+        return new Select($this->dbh, $table, $alias, $fields);
         
     }
 

@@ -23,7 +23,7 @@ class Select extends Query
         if (preg_match("/^where(\d+)/", $method, $matches)) {
             $group = (int)$matches[1];
             $this->where($group, $args[0], $args[1], $args[2]);
-            var_dump($args);
+            // var_dump($args);
         }
 
         if (preg_match("/^whereIn(\d+)/", $method, $matches)) {
@@ -46,7 +46,7 @@ class Select extends Query
     //WHERE CLAUSE
     public function where($group, $field, $operation, $subject)
     {
-        $this->where[$group][]  = "$this->table.$field $operation ?";
+        $this->where[$group][]  = "$this->alias.$field $operation ?";
         $this->params[$group][] = $subject;
          // echo "<pre>";
          // print_r($this);
@@ -58,7 +58,7 @@ class Select extends Query
     public function whereIn($group, $field, array $list)
     {
         $fList  =  $this->inClause($list);
-        $this->where[$group][] = "$this->table.$field IN  $fList";
+        $this->where[$group][] = "$this->alias.$field IN  $fList";
         $this->params[$group][] = isset($this->params[$group]) ? array_merge($this->params[$group], $list) : $list;
         return $this;
 
@@ -67,36 +67,38 @@ class Select extends Query
     //WHERE BETWEEN
     public function whereBetween($group, $field, $a, $b)
     {
-        $this->where[$group][] = " $($this->table.$field BETWEEN ? AND ?) ";
+        $this->where[$group][] = "($this->alias.$field BETWEEN ? AND ?) ";
         $this->params[$group][] = $a;
         $this->params[$group][] = $b;
         return $this;
     }
 
     //JOIN
-    public function join(Select $table, $on)
+    public function join(Select $table, $alias, $on)
     {
-        return $this->innerJoin($table, $on);
+        return $this->innerJoin($table, $alias, $on);
     }
 
     //INNER JOIN
-    public function innerJoin(Select $table, $on)
+    public function innerJoin(Select $table, $alias, $on)
     {
-        $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"INNER JOIN");
+        $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"INNER JOIN");
+        var_dump($this);
         return $this;
+        
     }
 
     //LEFT JOIN
-    public function leftJoin(Select $table, $on)
+    public function leftJoin(Select $table, $alias, $on)
     {
-        $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"LEFT JOIN");
+        $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"LEFT JOIN");
         return $this;
     }
 
     //RIGHT JOIN
-    public function rightJoin(Select $table, $on)
+    public function rightJoin(Select $table, $alias, $on)
     {
-        $this->joins[] = array("subject"=>$table, "on"=>$on, "join"=>"RIGHT JOIN");
+        $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"RIGHT JOIN");
         return $this;
     }
 
@@ -111,9 +113,9 @@ class Select extends Query
     public function orderBy($field, $asc = true)
     {
         if ($asc) {
-            $this->order[] = "$this->table.$field ASC";
+            $this->order[] = "$this->alias.$field ASC";
         } else {
-            $this->order[] = "$this->table.$field DESC";
+            $this->order[] = "$this->alias.$field DESC";
         }
 
         return $this;
@@ -150,11 +152,11 @@ class Select extends Query
 
         foreach ($this->joins as $obj) {
 
-            $leftTable  = $this->table;
+            $leftTable  = $this->alias;
             $rightTable = $obj['subject']->table;
-
-            $sql[] = $obj['join'] . " " . $rightTable;
-            $sql[] = "ON $leftTable." . $obj['on'] . " = $rightTable." . $obj['on'];
+            var_dump($obj['join']);
+            $sql[] = $obj['join'] . " " . $rightTable . " as " . $obj['ali'];
+            $sql[] = "ON $leftTable." . $obj['on'] . " = ".$obj['ali']."." . $obj['on'];
 
             
             list($_objects, $_sql) = $obj['subject']->buildJoin();
@@ -196,7 +198,7 @@ class Select extends Query
 
         $sql[] = "SELECT $fields";
 
-        $sql[] ="FROM $this->table";
+        $sql[] ="FROM $this->table as $this->alias";
 
         $sql = array_merge($sql, $_sql);
 

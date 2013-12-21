@@ -2,7 +2,7 @@
 
 require_once 'autoload.php';
 
-$db = new \DBWork\DBWork('localhost', 'test', 'root', '123');
+$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '123');
 
 // alias
 // joins
@@ -16,19 +16,17 @@ $db = new \DBWork\DBWork('localhost', 'test', 'root', '123');
 //     ->join($categories, 'CategoryID')
 //     ->limit(1);
 
-
-// $categories = $db->select('categories', '*');
-$products   = $db->select('products', '*');
-
+//$categories = $db->select('categories','c' ,['*']);
+$products   = $db->select('products','p' ,['count(ProductID) as count', 'ProductName']);
 // $categories->where1('CategoryName', "LIKE", "%A%");
  //$products->where2('ProductID', ">", 20);
- $products->where1('ProductID', "<", 30);
+ $products->where1('ProductID', ">", 25);
 
-// $products->outerJoin($categories, 'CategoryID');
+//$products->Join($categories,"c", 'CategoryID');
 
-// var_dump($products->buildJoin());
-//var_dump($products->getAll(true));
-
+//$products->buildJoin();
+//$products->getAll(true);
+var_dump($products->getAll(true));
 // $query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.id) as "fruits id"'])
 // ->join('fruit','f')
 // ->on('f.`fruitTest`','=','t.`id`'."\n")
@@ -59,11 +57,38 @@ $products   = $db->select('products', '*');
 //$del->runSQL(true);
 //
 //$del = $db->truncate("people")->runSQL(true);
-$update = $db->update("people");
-$update->set([
-                "name"    => "viktor",
-                "id"      => "4",
-                "emai"   => " 2222222",
-                "age" => "543654654"
-            ]);
-$update->runSQL(true);
+// $update = $db->update("people");
+// $update->set([
+//                 "id"    => "3",
+//                 "email"      => "rotem@gmail.com",
+//                 "age"   => "31",
+//                 "name" => "viktor"
+//             ]);
+//$result = $update->runSQL(true);
+
+// var_dump($result);
+
+
+
+
+
+// $a = "max(id)";
+// $regex = "/\w{3,}+\W/";
+// $peplaceRegax = "/\(.*?\)/";
+
+// $dd = preg_match("/\(.*?(.*)\)/", $a, $matches);
+// $group = $matches[1];
+// //var_dump($group);
+
+//  if (preg_match($regex, $a)) {
+
+//    // echo $group;
+//      $c = preg_replace("/$group/", "table.`$group`", $a);
+
+//       var_dump($c);
+
+//       // $f = preg_replace("/\(.*?(.*)\)/", "$1", $a);
+//       // var_dump($f);
+
+//  }
+
