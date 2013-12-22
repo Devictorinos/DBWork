@@ -42,19 +42,13 @@ class DBWork
                 preg_match("/\(.*?(.*)\)/", $field, $matches);
                 $argm = $matches[1];
 
-                $field = preg_replace("/$argm/", "$table.$argm", $field);
+                $field = preg_replace("/$argm/", "`$table`.$argm", $field);
             
                 return "$field";
 
-            }
+            } else {
 
-            // if (strpos($field, " * ")) {
-
-            //     return "$table.$field";
-
-             else {
-
-                return "$table.$field";
+                return "`$table`.$field";
 
             }
 
@@ -72,29 +66,34 @@ class DBWork
     public function select($table, $alias, $fields = null)
     {
         $fields = $this->fieldClause($alias, $fields);
-        // var_dump($fields);
-        // exit();
+
         return new Select($this->dbh, $table, $alias, $fields);
         
     }
 
     public function update($table)
     {
-        $table = $this->tableClause($table);
+        $table = $this->tableClause($table, $alias = null, $fields = null);
 
-        return new Update($this->dbh, $table, $fields = null);
+        return new Update($this->dbh, $table, $alias, $fields);
     }
 
-    public function delete($table, $fields = null)
+    public function insert($table, $alias = null, $fields = null)
+    {
+        $table = $this->tableClause($table);
+        return new Insert($this->dbh, $table, $alias, $fields);
+    }
+
+    public function delete($table, $alias = null, $fields = null)
     {
         $table  = $this->tableClause($table);
-        return new Delete($this->dbh, $table, $fields);
+        return new Delete($this->dbh, $table, $alias, $fields);
     }
 
-    public function truncate($table, $fields = null)
+    public function truncate($table, $alias = null, $fields = null)
     {
         $table = $this->tableClause($table);
-        return new Truncate($this->dbh, $table, $fields);
+        return new Truncate($this->dbh, $table, $alias, $fields);
     }
 
     // public function select($table, $alias, $fields)

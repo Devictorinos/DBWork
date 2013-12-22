@@ -10,7 +10,7 @@ class Update extends Query
 {
     public $where     = array();
     public $params    = array();
-    public $subjects  = array();
+    // public $subjects  = array();
     public $keysVals  = array();
     public $sql;
 
@@ -116,7 +116,11 @@ class Update extends Query
 
             $this->dbh->commit();
         
-            return true;
+            if ($query) {
+                return true;
+            } else {
+                return false;
+            }
             
         } catch (PDOException $e) {
              Log::error($e);

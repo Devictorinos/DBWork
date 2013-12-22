@@ -2,7 +2,7 @@
 
 require_once 'autoload.php';
 
-$db = new \DBWork\DBWork('localhost', 'northwind', 'root', '123');
+$db = new \DBWork\DBWork('localhost', 'test', 'root', '123');
 
 // alias
 // joins
@@ -17,7 +17,7 @@ $db = new \DBWork\DBWork('localhost', 'northwind', 'root', '123');
 //     ->limit(1);
 
 //$categories = $db->select('categories','c' ,['*']);
-$products   = $db->select('products','p' ,['count(ProductID) as Pcount', 'SupplierID']);
+$products   = $db->select('products','p' ,['sum(ProductID) as Pcount']);
 $products1   = $db->select('products','pp' , ['ProductName as PPname']);
 $catigorys  = $db->select('categories', 'c', 'CategoryName');
 // $categories->where1('CategoryName', "LIKE", "%A%");
@@ -27,10 +27,10 @@ $catigorys  = $db->select('categories', 'c', 'CategoryName');
 
 $products->Join($catigorys, 'c', 'CategoryID');
 $products->Join($products1,"pp", 'ProductID');
-$products->groupBy('SupplierID');
+//$products->groupBy('SupplierID');
 //$products->buildJoin();
 //$products->getAll(true);
-var_dump($products->getAll(true));
+//var_dump($products->getAll(true));
 // $query = $db->select('test', 't', ['DISTINCT t.`name` as  "test name", count(f.id) as "fruits id"'])
 // ->join('fruit','f')
 // ->on('f.`fruitTest`','=','t.`id`'."\n")
@@ -52,10 +52,11 @@ var_dump($products->getAll(true));
 
 
 // $rows = $query->getAll(true);
+// 
 
 // var_dump($rows);
-//$del = $db->delete('people')->runSQL(true);
-// $del->whereIn1("id", [3, 4, 5, 6, 7, 8]);
+//$del = $db->delete('people');
+//$del->whereIn1("id", [3, 4, 5, 6, 12, 11]);
 // $del->whereIn2("id", [3, 4, 5, 6, 7, 8]);
 
 //$del->runSQL(true);
@@ -66,33 +67,15 @@ var_dump($products->getAll(true));
 //                 "id"    => "3",
 //                 "email"      => "rotem@gmail.com",
 //                 "age"   => "31",
-//                 "name" => "viktor"
+//                 "name" => "viktorino"
 //             ]);
-//$result = $update->runSQL(true);
+// $result = $update->runSQL(true);
 
-// var_dump($result);
-
-
-
-
-
-// $a = "max(id)";
-// $regex = "/\w{3,}+\W/";
-// $peplaceRegax = "/\(.*?\)/";
-
-// $dd = preg_match("/\(.*?(.*)\)/", $a, $matches);
-// $group = $matches[1];
-// //var_dump($group);
-
-//  if (preg_match($regex, $a)) {
-
-//    // echo $group;
-//      $c = preg_replace("/$group/", "table.`$group`", $a);
-
-//       var_dump($c);
-
-//       // $f = preg_replace("/\(.*?(.*)\)/", "$1", $a);
-//       // var_dump($f);
-
-//  }
-
+//  var_dump($result);
+//  
+ 
+$res = $db->insert('people')->fieldsValues([
+                                 "email"  => "RORORO@gmail.com",
+                                 "age"   => "34",
+                                 "name" => "ROROR"
+                                 ])->runSQL(true);

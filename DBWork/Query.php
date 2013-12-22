@@ -10,7 +10,7 @@ abstract class Query
     
     public $table;
     public $fields;
-    public $query;
+    //public $query;
     public $alias;
 
     public function __construct($dbh, $table, $alias, $fields)
