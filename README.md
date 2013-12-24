@@ -1,7 +1,7 @@
 DBWork
 ======
 
-<!--Ready Methods for Now : SELECT , INSERT, DELETE, TRUNCATE, UPDATE -->
+Ready Methods for Now : SELECT , INSERT, DELETE, TRUNCATE, UPDATE 
 
 
 <b>Сonnection :</b>
