@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class.
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use PDO;
@@ -17,7 +24,6 @@ class Select extends Query
     public $limit   = null;
 
     //OR
-
     public function __call($method, $args)
     {
         if (preg_match("/^where(\d+)/", $method, $matches)) {
@@ -44,6 +50,9 @@ class Select extends Query
     }
 
     //WHERE CLAUSE
+    /**
+    * method where, public access is assumed
+    */
     public function where($group, $field, $operation, $subject)
     {
         $this->where[$group][]  = "$this->alias.$field $operation ?";
@@ -55,6 +64,9 @@ class Select extends Query
     }
 
     //WHERE IN
+    /**
+    * method whereIn, public access is assumed
+    */
     public function whereIn($group, $field, array $list)
     {
         $fList  =  $this->inClause($list);
@@ -65,6 +77,9 @@ class Select extends Query
     }
 
     //WHERE BETWEEN
+    /**
+    * method whereBetween, public access is assumed
+    */
     public function whereBetween($group, $field, $a, $b)
     {
         $this->where[$group][] = "($this->alias.$field BETWEEN ? AND ?) ";
@@ -74,12 +89,18 @@ class Select extends Query
     }
 
     //JOIN
+    /**
+    * method join, public access is assumed
+    */
     public function join(Select $table, $alias, $on)
     {
         return $this->innerJoin($table, $alias, $on);
     }
 
     //INNER JOIN
+    /**
+    * method innerJoin, public access is assumed
+    */
     public function innerJoin(Select $table, $alias, $on)
     {
         $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"INNER JOIN");
@@ -89,6 +110,9 @@ class Select extends Query
     }
 
     //LEFT JOIN
+    /**
+    * method leftJoin, public access is assumed
+    */
     public function leftJoin(Select $table, $alias, $on)
     {
         $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"LEFT JOIN");
@@ -96,6 +120,9 @@ class Select extends Query
     }
 
     //RIGHT JOIN
+    /**
+    * method rightJoin, public access is assumed
+    */
     public function rightJoin(Select $table, $alias, $on)
     {
         $this->joins[] = array("subject"=>$table, "ali"=>$alias, "on"=>$on, "join"=>"RIGHT JOIN");
@@ -103,6 +130,9 @@ class Select extends Query
     }
 
     //GROUP BY
+    /**
+    * method groupBy, public access is assumed
+    */
     public function groupBy($field, $asc = true)
     {
         if ($asc) {
@@ -115,6 +145,9 @@ class Select extends Query
     }
 
     //ORDER BY
+    /**
+    * method orderBy, public access is assumed
+    */
     public function orderBy($field, $asc = true)
     {
         if ($asc) {
@@ -128,6 +161,9 @@ class Select extends Query
     }
 
     //LIMIT
+    /**
+    * method limit, public access is assumed
+    */
     public function limit($limit)
     {
         $this->limit = $limit;
@@ -149,7 +185,7 @@ class Select extends Query
         return "($list)";
     }
 
-    public function buildJoin()
+    private function buildJoin()
     {
 
         $sql = array();
@@ -282,12 +318,18 @@ class Select extends Query
     }
 
     //Select Select Method
+    /**
+    * method getAll, public access is assumed
+    */
     public function getAll($debug = false)
     {
         return $this->runSQL($debug)->fetchAll(PDO::FETCH_ASSOC);
     }
 
     //select One Row Method
+    /**
+    * method getOne, public access is assumed
+    */
     public function getOne($debug = false)
     {
         return $this->runSQL($debug)->fetch(PDO::FETCH_ASSOC);

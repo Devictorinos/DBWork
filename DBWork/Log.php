@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class.
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use Exception;

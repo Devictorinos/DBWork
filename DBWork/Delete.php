@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class.
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use PDO;
@@ -36,6 +43,9 @@ class Delete extends Query
     }
 
     //WHERE CLAUSE
+    /**
+    * method where, public access is assumed
+    */
     public function where($group, $field, $operation, $subject)
     {
         $this->where[$group][]  = "$this->table.`$field` $operation ?";
@@ -47,6 +57,9 @@ class Delete extends Query
     }
 
     //WHERE IN
+    /**
+    * method whereIn, public access is assumed
+    */
     public function whereIn($group, $field, array $list)
     {
         $flist = $this->inClause($list);
@@ -58,11 +71,15 @@ class Delete extends Query
         return $this;
     }
 
+    /**
+    * method limit, public access is assumed
+    */
     public function limit($limit)
     {
         $this->limit = (int)$limit;
         return $this;
     }
+
 
     private function inClause($list)
     {
@@ -134,6 +151,9 @@ class Delete extends Query
     }
 
     //EXECUTE QUERY
+    /**
+    * method runSQL, public access is assumed
+    */
     public function runSQL($debug = false)
     {
         list($sql, $params) = $this->buildSQL();

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use PDO;
@@ -14,7 +21,9 @@ class Update extends Query
     public $keysVals  = array();
     public $sql;
 
-
+    /**
+    * method set, public access is assumed
+    */
     public function set($fields)
     {
 
@@ -85,6 +94,10 @@ class Update extends Query
 
     }
 
+
+    /**
+    * method runSQL, public access is assumed
+    */
     public function runSQL($debug = false)
     {
         $sql;

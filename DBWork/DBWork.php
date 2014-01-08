@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Nice DB Work class.
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
 
 namespace DBWork;
 
@@ -24,6 +30,7 @@ class DBWork
             Log::error($e);
         }
     }
+
 
     private function fieldClause($table, $fields)
     {
@@ -57,12 +64,17 @@ class DBWork
         return $fields;
     }
 
+
     private function tableClause($table)
     {
         $table = "`$table`";
         return $table;
     }
 
+
+    /**
+    * method select, public access is assumed
+    */
     public function select($table, $alias, $fields = null)
     {
         $fields = $this->fieldClause($alias, $fields);
@@ -71,6 +83,10 @@ class DBWork
         
     }
 
+
+    /**
+    * method update, public access is assumed
+    */
     public function update($table)
     {
         $table = $this->tableClause($table, $alias = null, $fields = null);
@@ -78,18 +94,30 @@ class DBWork
         return new Update($this->dbh, $table, $alias, $fields);
     }
 
+
+    /**
+    * method insert, public access is assumed
+    */
     public function insert($table, $alias = null, $fields = null)
     {
         $table = $this->tableClause($table);
         return new Insert($this->dbh, $table, $alias, $fields);
     }
 
+
+    /**
+    * method delete, public access is assumed
+    */
     public function delete($table, $alias = null, $fields = null)
     {
         $table  = $this->tableClause($table);
         return new Delete($this->dbh, $table, $alias, $fields);
     }
 
+
+    /**
+    * method truncate, public access is assumed
+    */
     public function truncate($table, $alias = null, $fields = null)
     {
         $table = $this->tableClause($table);
@@ -104,19 +132,19 @@ class DBWork
         
     // }
 
-    public function transaction(callable $callback)
-    {
-        $this->dbh->beginTransaction();
+    // public function transaction(callable $callback)
+    // {
+    //     $this->dbh->beginTransaction();
         
-        try {
-            call_user_func($callback);
+    //     try {
+    //         call_user_func($callback);
 
-        } catch (Exception $e) {
+    //     } catch (Exception $e) {
 
-            Log::error($e);
-            $this->dbh->rollBack();
+    //         Log::error($e);
+    //         $this->dbh->rollBack();
 
-        }
-        $this->dbh->commit();
-    }
+    //     }
+    //     $this->dbh->commit();
+    // }
 }

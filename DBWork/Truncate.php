@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use PDO;
@@ -21,6 +28,10 @@ class Truncate extends Query
         return $sql;
     }
 
+
+    /**
+    * method runSQL, public access is assumed
+    */
     public function runSQL($debug = false)
     {
         $sql = $this->buildSQL();

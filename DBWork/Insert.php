@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Nice DB Work class.
+ *
+ * @package Nice DB Work
+ * @author Viktor Lubchuk <viktorlubchuk@gmail.com>
+ */
+
 namespace DBWork;
 
 use PDO;
@@ -16,6 +23,9 @@ class Insert extends Query
     public $values   = array();
     public $sql      = array();
 
+    /**
+    * method fieldsValues, public access is assumed
+    */    
     public function fieldsValues(array $subjects)
     {
 
@@ -47,6 +57,9 @@ class Insert extends Query
         return $this->sql;
     }
 
+    /**
+    * method runSQL, public access is assumed
+    */
     public function runSQL($debug = false)
     {
         $sql = $this->buildSQL();
